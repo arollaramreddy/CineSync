@@ -1,276 +1,266 @@
-# CineSync - Movie Booking Platform
+# 🎬 CineSync – Distributed Movie Booking Platform
 
-A modern movie booking web application built with Flask and CockroachDB. CineSync allows users to browse movies, select showtimes, choose seats, and complete bookings seamlessly.
+CineSync is a **distributed movie ticket reservation system** built using **Flask** and **CockroachDB (NewSQL)**. The system is designed to demonstrate **real-world distributed database concepts**, including **fault tolerance, recovery, strong consistency, replication, partitioning, and secure communication using TLS certificates**.
 
-## Features
+The CockroachDB cluster is deployed across **multiple machines**, simulating a production-grade distributed environment.
 
-- **Browse Movies**: View all available movies with filters by type, language, and rating
-- **Theater Listings**: Find theaters in different cities with detailed information
-- **Showtime Selection**: Select from available showtimes for movies at specific theaters
-- **Interactive Seat Selection**: Visual seat map showing available and booked seats
-- **Booking Management**: Complete booking flow with confirmation and history
-- **User Authentication**: Simple session-based login/registration system
-- **Responsive Design**: Mobile-friendly interface built with Bootstrap 5
+---
 
-## Technology Stack
+## ✨ Key Highlights
 
-- **Backend**: Flask (Python)
-- **Database**: CockroachDB (PostgreSQL-compatible)
-- **ORM**: SQLAlchemy
-- **Frontend**: Bootstrap 5, Vanilla JavaScript
-- **Session Management**: Flask Sessions
+* 🌐 **Multi-machine distributed database cluster**
+* 🔁 **Fault-tolerant & recovery-capable architecture**
+* 🔒 **Serializable isolation** (strong transactional consistency)
+* 📦 **Data partitioning & replication** across nodes
+* 🛡️ **End-to-end security using TLS certificates**
+* 📈 **Horizontally scalable system design**
 
-## Project Structure
+---
+
+## 🚀 Features
+
+* **Browse Movies**: View available movies with filters (type, language, rating)
+* **Theater Listings**: Browse theaters across cities
+* **Showtime Selection**: Choose movie showtimes per theater
+* **Interactive Seat Selection**: Real-time seat availability visualization
+* **Booking Management**: Booking confirmation and history
+* **User Authentication**: Session-based login & registration
+* **Responsive UI**: Mobile-friendly interface using Bootstrap 5
+
+---
+
+## 🧱 Technology Stack
+
+* **Backend**: Flask (Python)
+* **Database**: CockroachDB (NewSQL, PostgreSQL-compatible)
+* **ORM**: SQLAlchemy
+* **Frontend**: Bootstrap 5, Vanilla JavaScript
+* **Security**: TLS certificates (CA, node, client certs)
+
+---
+
+## 🏗️ Distributed Cluster Architecture
+
+* **Node 1 (MacOS)**: `<NODE_1_IP>`
+* **Node 2 (Windows / Linux)**: `<NODE_2_IP>`
+* **Deployment**: Multi-machine CockroachDB cluster
+* **Consistency Model**: Serializable Isolation (default)
+* **Security**: Mutual TLS authentication
+
+> 🔐 **Note**: IP addresses and hostnames are anonymized for security. Replace placeholders during deployment.
+
+---
+
+## 📁 Project Structure
 
 ```
 cinesync/
 ├── app/
-│   ├── __init__.py          # Flask app factory
-│   ├── config.py            # Configuration classes
-│   ├── extensions.py        # Database extensions
-│   ├── models/              # SQLAlchemy models
-│   ├── routes/              # Blueprint routes
-│   ├── services/            # Business logic layer
-│   ├── templates/           # Jinja2 templates
-│   └── static/              # CSS, JavaScript, images
-├── requirements.txt         # Python dependencies
-├── run.py                   # Application entry point
-├── .env                     # Environment variables (create from .env.example)
-└── README.md               # This file
+│   ├── __init__.py
+│   ├── config.py
+│   ├── extensions.py
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── templates/
+│   └── static/
+├── requirements.txt
+├── run.py
+├── .env.example
+└── README.md
 ```
 
-## Prerequisites
+---
 
-- Python 3.8 or higher
-- CockroachDB cluster (running and accessible)
-- Existing database named `cinesync` with populated tables
+## 🧩 Prerequisites
 
-## Installation
+* Python 3.8+
+* CockroachDB installed on all nodes
+* Multi-machine setup (VMs or physical machines)
+* Existing database named `cinesync` with populated tables
 
-1. **Clone the repository** (or navigate to the project directory)
+---
 
-   ```bash
-   cd cinesync
-   ```
+## 🔐 Secure Distributed CockroachDB Setup (Step-by-Step)
 
-2. **Create a virtual environment**
+### Step 1: Create Directories (Node 1)
 
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Activate the virtual environment**
-
-   - Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-   - macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Install dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Configure environment variables**
-
-   Create a `.env` file in the root directory based on `.env.example`:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Edit `.env` and update with your settings:
-
-   ```
-   SECRET_KEY=your-secret-key-here
-   DATABASE_URL=cockroachdb://user:password@host:26257/cinesync?sslmode=verify-full
-   FLASK_ENV=development
-   ```
-
-## Database Schema
-
-The application expects the following tables to exist in your CockroachDB database:
-
-- **events**: Movie/event information
-- **theaters**: Theater locations and details
-- **customers_local**: Customer accounts
-- **auditoriums**: Theater auditoriums/screens
-- **seats**: Seat information for auditoriums
-- **shows**: Showtimes linking events to auditoriums
-- **bookings**: Customer bookings
-- **booking_seats**: Junction table for booking-seat relationships
-
-**Note**: This application does NOT create or migrate tables. All tables must exist with data before running.
-
-## Running the Application
-
-1. **Ensure your CockroachDB cluster is running**
-
-2. **Start the Flask development server**
-
-   ```bash
-   python run.py
-   ```
-
-   The application will start on `http://localhost:5000`
-
-3. **Access the application**
-
-   Open your web browser and navigate to:
-   ```
-   http://localhost:5000
-   ```
-
-## Usage
-
-### For Customers
-
-1. **Browse Movies**: Visit the homepage or click "Movies" to see all available movies
-2. **Filter Movies**: Use filters to find movies by type, language, or rating
-3. **View Movie Details**: Click on a movie to see details and available showtimes
-4. **Select Showtime**: Choose a date and theater to see available showtimes
-5. **Choose Seats**: Select your preferred seats from the interactive seat map
-6. **Login/Register**: Create an account or login to complete booking
-7. **Confirm Booking**: Review your selection and confirm the booking
-8. **View History**: Check your profile to see all past bookings
-
-### For Theaters
-
-- Browse all theaters
-- Filter by city
-- View theater details including auditoriums
-- See today's showtimes
-
-## API Structure
-
-### Routes
-
-- **Main Routes** (`/`)
-  - `GET /` - Homepage with featured movies
-  - `GET /search` - Search movies and theaters
-
-- **Event Routes** (`/events`)
-  - `GET /events` - List all movies with filters
-  - `GET /events/<event_id>` - Movie details
-
-- **Theater Routes** (`/theaters`)
-  - `GET /theaters` - List all theaters
-  - `GET /theaters/<theater_id>` - Theater details
-
-- **Show Routes** (`/shows`)
-  - `GET /shows/select` - Select showtime
-
-- **Booking Routes** (`/bookings`)
-  - `GET /bookings/seats` - Seat selection
-  - `POST /bookings/confirm` - Confirm booking
-  - `POST /bookings/create` - Create booking
-  - `GET /bookings/success/<booking_id>` - Booking confirmation
-
-- **Customer Routes** (`/customers`)
-  - `GET/POST /customers/login` - Login
-  - `GET/POST /customers/register` - Register
-  - `GET /customers/logout` - Logout
-  - `GET /customers/profile` - Profile and booking history
-
-## Service Layer
-
-The application uses a service layer for business logic:
-
-- **EventService**: Movie/event operations
-- **TheaterService**: Theater and auditorium operations
-- **ShowService**: Showtime queries and filtering
-- **SeatService**: Seat availability and selection
-- **BookingService**: Booking creation and management
-
-## Database Connection
-
-The application uses SQLAlchemy with the `psycopg2` driver for CockroachDB connectivity. Connection parameters are configured via the `DATABASE_URL` environment variable.
-
-### Connection String Format
-
-```
-cockroachdb://username:password@host:port/database?sslmode=verify-full
+```bash
+mkdir -p ~/cockroach-data-node1/certs
+mkdir -p ~/cockroach-data-node1/my-safe-directory
+mkdir -p ~/cockroach-data-node1/data
 ```
 
-For local development without SSL:
+---
+
+### Step 2: Create Certificate Authority (CA)
+
+```bash
+cockroach cert create-ca \
+  --certs-dir=~/cockroach-data-node1/certs \
+  --ca-key=~/cockroach-data-node1/my-safe-directory/ca.key
 ```
-cockroachdb://root@localhost:26257/cinesync?sslmode=disable
+
+---
+
+### Step 3: Create Node Certificate (Node 1)
+
+```bash
+cockroach cert create-node \
+  localhost 127.0.0.1 <NODE_1_IP> \
+  --certs-dir=~/cockroach-data-node1/certs \
+  --ca-key=~/cockroach-data-node1/my-safe-directory/ca.key
 ```
 
-## Important Notes
+---
 
-- **No Migrations**: This application does not create or modify database tables. All schema must exist before running.
-- **Session-Based Auth**: Authentication uses Flask sessions, not password hashing (suitable for demo/development)
-- **Geography Columns**: The `geog` columns in theaters and customers are stored as strings. Advanced geographic queries are not implemented.
-- **Composite Primary Key**: The `shows` table uses a composite primary key (show_id, event_id)
+### Step 4: Prepare Certificates for Node 2
 
-## Development
+```bash
+mkdir -p ~/cockroach-node2-certs
+cp ~/cockroach-data-node1/certs/ca.crt ~/cockroach-node2-certs/ca.crt
+```
 
-### Adding New Features
+---
 
-1. **Models**: Add/modify models in `app/models/`
-2. **Services**: Add business logic in `app/services/`
-3. **Routes**: Add endpoints in `app/routes/`
-4. **Templates**: Add HTML templates in `app/templates/`
-5. **Static Files**: Add CSS/JS in `app/static/`
+### Step 5: Create Node Certificate (Node 2)
 
-### Code Organization
+```bash
+cockroach cert create-node \
+  <NODE_2_IP> \
+  --certs-dir=~/cockroach-node2-certs \
+  --ca-key=~/cockroach-data-node1/my-safe-directory/ca.key
+```
 
-- Keep business logic in service layer
-- Use blueprints for route organization
-- Follow Flask best practices
-- Use Jinja2 template inheritance
+---
 
-## Troubleshooting
+### Step 6: Create Client Certificate
 
-### Common Issues
+```bash
+cockroach cert create-client root \
+  --certs-dir=~/cockroach-data-node1/certs \
+  --ca-key=~/cockroach-data-node1/my-safe-directory/ca.key
+```
 
-1. **Database Connection Error**
-   - Verify CockroachDB is running
-   - Check DATABASE_URL in `.env`
-   - Ensure database exists and has data
+---
 
-2. **Import Errors**
-   - Activate virtual environment
-   - Install all requirements: `pip install -r requirements.txt`
+### Step 7: Start CockroachDB Node 1
 
-3. **Template Not Found**
-   - Verify template files exist in correct directories
-   - Check template names in route handlers
+```bash
+cockroach start \
+  --certs-dir=~/cockroach-data-node1/certs \
+  --store=~/cockroach-data-node1/data \
+  --listen-addr=<NODE_1_IP>:26257 \
+  --http-addr=<NODE_1_IP>:8080 \
+  --join=<NODE_1_IP>:26257,<NODE_2_IP>:26257
+```
 
-4. **Session Issues**
-   - Set a proper SECRET_KEY in `.env`
-   - Clear browser cookies
+* Admin UI: `https://<NODE_1_IP>:8080`
 
-## Security Considerations
+---
 
-⚠️ **This is a development/demo application. For production use:**
+### Step 8: Initialize the Cluster (Run Once)
 
-- Implement proper password hashing (bcrypt, argon2)
-- Add CSRF protection
-- Use HTTPS/SSL
-- Implement rate limiting
-- Add input validation and sanitization
-- Use prepared statements (already done via SQLAlchemy)
-- Add proper error handling
-- Implement logging and monitoring
+```bash
+cockroach init \
+  --host=<NODE_1_IP>:26257 \
+  --certs-dir=~/cockroach-data-node1/certs
+```
 
-## License
+Once the cluster is initialized **from the primary machine (Node 1)**, it becomes the trusted root of the cluster.
 
-This project is created for educational/demonstration purposes.
+🔐 **Important:**
 
-## Support
+* All other nodes join the cluster using the **CA and node certificates generated on the primary machine**.
+* As long as the joining nodes possess certificates signed by the same CA, they can securely authenticate and join the cluster.
+* This enables **secure node discovery, mutual authentication, and encrypted communication** across machines.
 
-For issues or questions, please check:
-- CockroachDB documentation: https://www.cockroachlabs.com/docs/
-- Flask documentation: https://flask.palletsprojects.com/
-- SQLAlchemy documentation: https://docs.sqlalchemy.org/
+---
 
-## Contributors
+## 🗄️ Database Schema
 
-Built with Flask, CockroachDB, and Bootstrap 5.
+Expected tables:
+
+* events
+* theaters
+* customers_local
+* auditoriums
+* seats
+* shows
+* bookings
+* booking_seats
+
+> ⚠️ This application does **not** run migrations. Tables must exist beforehand.
+
+---
+
+## ⚙️ Application Setup
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Environment Configuration
+
+```env
+SECRET_KEY=your-secret-key
+DATABASE_URL=cockroachdb://user@<NODE_1_IP>:26257/cinesync?sslmode=verify-full
+FLASK_ENV=development
+```
+
+---
+
+## ▶️ Run the Application
+
+```bash
+python run.py
+```
+
+Access:
+
+```
+http://localhost:5000
+```
+
+---
+
+## 🧠 System Design Concepts Demonstrated
+
+* Distributed transactions
+* Serializable isolation guarantees
+* Consensus-driven replication
+* Failure recovery
+* Secure inter-node communication
+* Horizontal scalability
+
+---
+
+## 🔐 Security Notes
+
+⚠️ This is a demo/academic project.
+
+For production:
+
+* Use password hashing (bcrypt/argon2)
+* Enable CSRF protection
+* Enforce HTTPS
+* Add rate limiting
+* Implement monitoring & logging
+
+---
+
+## 📜 License
+
+Educational / Demonstration purpose only.
+
+---
+
+## 🤝 Contributions
+
+Built using **Flask**, **CockroachDB**, and **Bootstrap 5**.
+
+---
+
+⭐ If you find this project interesting, feel free to star the repo!
