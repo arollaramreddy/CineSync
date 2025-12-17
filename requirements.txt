@@ -1,0 +1,13 @@
+# Flask and Extensions
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+
+# Database Drivers
+psycopg2-binary==2.9.9
+sqlalchemy-cockroachdb==2.0.2
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Utilities
+Werkzeug==3.0.1

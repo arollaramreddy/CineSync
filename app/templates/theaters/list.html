@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Theaters - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Theaters</h1>
+
+    <!-- City Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ url_for('theaters.list_theaters') }}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Filter by City</label>
+                        <select name="city" class="form-select">
+                            <option value="">All Cities</option>
+                            {% for city in cities %}
+                            <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>
+                                {{ city }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Apply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Theaters List -->
+    <div class="row g-4">
+        {% for theater in theaters %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ theater.name }}</h5>
+                    <p class="card-text">
+                        <i class="bi bi-geo-alt text-primary"></i>
+                        {{ theater.city }}, {{ theater.state }}
+                    </p>
+                    <p class="card-text text-muted small">{{ theater.address }}</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="{{ url_for('theaters.theater_detail', theater_id=theater.theater_id) }}"
+                       class="btn btn-primary btn-sm w-100">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No theaters found.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

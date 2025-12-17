@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ theater.name }} - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-3">{{ theater.name }}</h1>
+            <p class="lead">
+                <i class="bi bi-geo-alt text-primary"></i>
+                {{ theater.address }}, {{ theater.city }}, {{ theater.state }}
+            </p>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Auditoriums -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h3 class="mb-3">Auditoriums</h3>
+            <div class="row g-3">
+                {% for auditorium in auditoriums %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ auditorium.name }}</h5>
+                            <p class="card-text text-muted">
+                                <i class="bi bi-people"></i> {{ auditorium.capacity }} seats
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Shows -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="mb-3">Today's Shows</h3>
+
+            {% if shows_data %}
+            <div class="list-group">
+                {% for show, event, theater_obj, auditorium in shows_data %}
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <h5 class="mb-1">{{ event.event_name }}</h5>
+                            <small class="text-muted">{{ event.language }} | {{ event.rating }}</small>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-0">
+                                <i class="bi bi-door-open"></i> {{ auditorium.name }}
+                            </p>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="mb-0">
+                                <i class="bi bi-clock"></i>
+                                {{ show.show_datetime.strftime('%I:%M %p') }}
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <span class="badge bg-success me-2">${{ "%.2f"|format(show.price) }}</span>
+                            <a href="{{ url_for('bookings.select_seats', show_id=show.show_id, event_id=show.event_id) }}"
+                               class="btn btn-primary btn-sm">
+                                Book
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">No shows scheduled for today.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

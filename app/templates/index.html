@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}CineSync - Book Movie Tickets Online{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">Book Your Movie Tickets</h1>
+                <p class="lead">Experience the best of cinema with CineSync</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Events -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3">Now Showing</h2>
+            <a href="{{ url_for('events.list_events') }}" class="btn btn-outline-primary">View All</a>
+        </div>
+
+        <div class="row g-4">
+            {% for event in featured_events %}
+            <div class="col-md-4 col-lg-2">
+                <div class="card event-card h-100 shadow-sm">
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 300px;">
+                        <i class="bi bi-camera-reels text-white" style="font-size: 4rem;"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.event_name }}</h5>
+                        <p class="card-text text-muted small mb-2">
+                            {% if event.language %}
+                                <i class="bi bi-translate"></i> {{ event.language }}
+                            {% endif %}
+                            {% if event.duration_mins %}
+                                | {{ event.duration_mins }} mins
+                            {% endif %}
+                        </p>
+                        {% if event.rating %}
+                        <span class="badge bg-warning text-dark">{{ event.rating }}</span>
+                        {% endif %}
+                        {% if event.event_type %}
+                        <span class="badge bg-info">{{ event.event_type }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="{{ url_for('events.event_detail', event_id=event.event_id) }}"
+                           class="btn btn-primary btn-sm w-100">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Quick Filters -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h3 class="mb-4">Browse by Category</h3>
+        <div class="row g-3">
+            {% for type in event_types[:6] %}
+            <div class="col-md-4">
+                <a href="{{ url_for('events.list_events', type=type) }}"
+                   class="btn btn-outline-secondary w-100">
+                    {{ type }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Cities Section -->
+<section class="py-5">
+    <div class="container">
+        <h3 class="mb-4">Browse by City</h3>
+        <div class="row g-3">
+            {% for city in cities[:6] %}
+            <div class="col-md-3">
+                <a href="{{ url_for('theaters.list_theaters', city=city) }}"
+                   class="btn btn-outline-primary w-100">
+                    <i class="bi bi-geo-alt"></i> {{ city }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

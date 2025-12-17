@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Booking - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Confirm Your Booking</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Movie Details -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-film"></i> Movie Details</h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ event.event_name }}</h4>
+                    <p class="mb-1">{{ event.language }} | {{ event.duration_mins }} mins | {{ event.rating }}</p>
+                </div>
+            </div>
+
+            <!-- Show Details -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Show Details</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1">
+                        <strong>Theater:</strong> {{ show.auditorium.theater.name }}
+                    </p>
+                    <p class="mb-1">
+                        <strong>Auditorium:</strong> {{ show.auditorium.name }}
+                    </p>
+                    <p class="mb-0">
+                        <strong>Date & Time:</strong>
+                        {{ show.show_datetime.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Seat Details -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-seat"></i> Seat Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Selected Seats:</strong></p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for seat in seats %}
+                        <span class="badge bg-secondary fs-6">{{ seat.seat_no }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Ticket Price:</span>
+                        <span>${{ "%.2f"|format(show.price) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Number of Seats:</span>
+                        <span>{{ seats|length }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total Amount:</strong>
+                        <strong class="text-success">${{ "%.2f"|format(total_amount) }}</strong>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <form method="post" action="{{ url_for('bookings.create_booking') }}">
+                        <input type="hidden" name="show_id" value="{{ show.show_id }}">
+                        <input type="hidden" name="event_id" value="{{ show.event_id }}">
+                        {% for seat in seats %}
+                        <input type="hidden" name="seat_ids" value="{{ seat.seat_id }}">
+                        {% endfor %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Confirm Booking
+                            </button>
+                            <a href="{{ url_for('bookings.select_seats',
+                                              show_id=show.show_id,
+                                              event_id=show.event_id) }}"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Change Seats
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

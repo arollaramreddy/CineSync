@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.event_name }} - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Event Poster -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <i class="bi bi-camera-reels text-white" style="font-size: 8rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Details -->
+        <div class="col-md-8">
+            <h1 class="mb-3">{{ event.event_name }}</h1>
+
+            <div class="mb-3">
+                {% if event.rating %}
+                <span class="badge bg-warning text-dark fs-6">{{ event.rating }}</span>
+                {% endif %}
+                {% if event.event_type %}
+                <span class="badge bg-info fs-6">{{ event.event_type }}</span>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <p class="mb-2">
+                    <strong><i class="bi bi-translate"></i> Language:</strong>
+                    {{ event.language or 'N/A' }}
+                </p>
+                <p class="mb-2">
+                    <strong><i class="bi bi-clock"></i> Duration:</strong>
+                    {{ event.duration_mins }} minutes
+                </p>
+            </div>
+
+            <hr>
+
+            <!-- Book Tickets Section -->
+            <h3 class="mb-3">Book Tickets</h3>
+
+            {% if available_dates %}
+            <div class="mb-3">
+                <label class="form-label fw-bold">Select Date:</label>
+                <div class="btn-group-vertical w-100" role="group">
+                    {% for date in available_dates %}
+                    <a href="{{ url_for('shows.select_show', event_id=event.event_id, date=date.strftime('%Y-%m-%d')) }}"
+                       class="btn btn-outline-primary text-start">
+                        {{ date.strftime('%A, %B %d, %Y') }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> No shows available for this movie.
+            </div>
+            {% endif %}
+
+            {% if theaters %}
+            <div class="mt-4">
+                <h5 class="mb-3">Available in {{ theaters|length }} theater(s)</h5>
+                <div class="list-group">
+                    {% for theater in theaters %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ theater.name }}</h6>
+                            <small class="text-muted">
+                                <i class="bi bi-geo-alt"></i> {{ theater.city }}
+                            </small>
+                        </div>
+                        <p class="mb-1 small text-muted">{{ theater.address }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

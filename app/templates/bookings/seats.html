@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Select Seats - {{ event.event_name }} - CineSync{% endblock %}
+
+{% block extra_css %}
+<style>
+    .seat {
+        width: 40px;
+        height: 40px;
+        margin: 5px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        background-color: #28a745;
+        color: white;
+        transition: all 0.3s;
+    }
+    .seat:hover {
+        transform: scale(1.1);
+    }
+    .seat.selected {
+        background-color: #007bff;
+        border-color: #0056b3;
+    }
+    .seat.booked {
+        background-color: #6c757d;
+        border-color: #5a6268;
+        cursor: not-allowed;
+        opacity: 0.4;
+    }
+    .seat-legend {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .legend-box {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+    }
+    .screen {
+        background: linear-gradient(to bottom, #333, #666);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Show Info -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>{{ event.event_name }}</h3>
+                    <p class="mb-1">
+                        <i class="bi bi-building"></i> {{ theater.name }}
+                        <span class="ms-3"><i class="bi bi-door-open"></i> {{ auditorium.name }}</span>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-clock"></i> {{ show.show_datetime.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h4>Price: ${{ "%.2f"|format(show.price) }}</h4>
+                    <small class="text-muted">per seat</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seat Selection -->
+    <div class="card">
+        <div class="card-body">
+            <!-- Legend -->
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="legend-box" style="background-color: #28a745;"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background-color: #007bff;"></div>
+                    <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background-color: #6c757d; opacity: 0.4;"></div>
+                    <span>Booked</span>
+                </div>
+            </div>
+
+            <!-- Screen -->
+            <div class="screen">
+                <i class="bi bi-tv"></i> SCREEN
+            </div>
+
+            <!-- Seats Grid -->
+            <div class="text-center" id="seatsContainer">
+                {% for seat_data in seats_with_status %}
+                <div class="seat {% if seat_data.is_booked %}booked{% endif %}"
+                     data-seat-id="{{ seat_data.seat.seat_id }}"
+                     {% if seat_data.is_booked %}data-booked="true"{% endif %}>
+                    {{ seat_data.seat.seat_no }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Selected Seats Info -->
+            <div class="mt-4" id="selectedInfo" style="display: none;">
+                <div class="alert alert-info">
+                    <strong>Selected Seats:</strong> <span id="selectedSeats"></span><br>
+                    <strong>Total Amount:</strong> $<span id="totalAmount">0.00</span>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <form method="post" action="{{ url_for('bookings.confirm_booking') }}" id="bookingForm">
+                <input type="hidden" name="show_id" value="{{ show.show_id }}">
+                <input type="hidden" name="event_id" value="{{ show.event_id }}">
+                <div id="seatInputs"></div>
+
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg" id="proceedBtn" disabled>
+                        Proceed to Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const seatPrice = {{ show.price }};
+    const selectedSeats = new Set();
+
+    // Add click event listeners only to available seats
+    document.querySelectorAll('.seat:not(.booked)').forEach(seat => {
+        seat.addEventListener('click', function() {
+            const seatId = this.dataset.seatId;
+            const seatNo = this.textContent.trim();
+
+            if (selectedSeats.has(seatId)) {
+                selectedSeats.delete(seatId);
+                this.classList.remove('selected');
+            } else {
+                selectedSeats.add(seatId);
+                this.classList.add('selected');
+            }
+
+            updateSelection();
+        });
+    });
+
+    function updateSelection() {
+        const count = selectedSeats.size;
+        const total = count * seatPrice;
+
+        if (count > 0) {
+            document.getElementById('selectedInfo').style.display = 'block';
+            document.getElementById('proceedBtn').disabled = false;
+
+            // Get seat numbers
+            const seatNumbers = Array.from(selectedSeats).map(seatId => {
+                const seatEl = document.querySelector(`[data-seat-id="${seatId}"]`);
+                return seatEl ? seatEl.textContent.trim() : '';
+            }).join(', ');
+
+            document.getElementById('selectedSeats').textContent = seatNumbers;
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+
+            // Update form inputs
+            const seatInputsDiv = document.getElementById('seatInputs');
+            seatInputsDiv.innerHTML = '';
+            selectedSeats.forEach(seatId => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'seat_ids';
+                input.value = seatId;
+                seatInputsDiv.appendChild(input);
+            });
+        } else {
+            document.getElementById('selectedInfo').style.display = 'none';
+            document.getElementById('proceedBtn').disabled = true;
+        }
+    }
+</script>
+{% endblock %}

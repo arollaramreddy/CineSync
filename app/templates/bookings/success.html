@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Successful - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Success Message -->
+            <div class="card border-success shadow-lg">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    <h1 class="mt-3 text-success">Booking Successful!</h1>
+                    <p class="lead">Your booking has been confirmed</p>
+                    <p class="text-muted">Booking ID: <strong>{{ booking.booking_id }}</strong></p>
+                </div>
+            </div>
+
+            <!-- Booking Details -->
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Movie:</strong></div>
+                        <div class="col-sm-8">{{ event.event_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Theater:</strong></div>
+                        <div class="col-sm-8">{{ theater.name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Auditorium:</strong></div>
+                        <div class="col-sm-8">{{ auditorium.name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Date & Time:</strong></div>
+                        <div class="col-sm-8">
+                            {{ show.show_datetime.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Seats:</strong></div>
+                        <div class="col-sm-8">
+                            {% for seat in seats %}
+                            <span class="badge bg-secondary me-1">{{ seat.seat_no }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Total Amount:</strong></div>
+                        <div class="col-sm-8">
+                            <span class="text-success fw-bold">
+                                ${{ "%.2f"|format(booking.total_amount) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4"><strong>Booked At:</strong></div>
+                        <div class="col-sm-8">
+                            {{ booking.booked_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 mt-4">
+                <a href="{{ url_for('customers.profile') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-person-circle"></i> View All Bookings
+                </a>
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

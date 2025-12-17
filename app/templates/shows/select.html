@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Select Show - {{ event.event_name }} - CineSync{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-3">{{ event.event_name }}</h1>
+    <p class="lead mb-4">
+        {{ event.language }} | {{ event.duration_mins }} mins | {{ event.rating }}
+    </p>
+
+    <!-- Date Display -->
+    <div class="alert alert-info">
+        <i class="bi bi-calendar"></i>
+        Showing times for: <strong>{{ show_date.strftime('%A, %B %d, %Y') }}</strong>
+    </div>
+
+    <!-- Shows by Theater -->
+    {% if theaters_shows %}
+        {% for theater_id, data in theaters_shows.items() %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-building"></i> {{ data.theater.name }}
+                </h5>
+                <small>{{ data.theater.address }}, {{ data.theater.city }}</small>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for show_data in data.shows %}
+                    <div class="col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">
+                                    {{ show_data.show.show_datetime.strftime('%I:%M %p') }}
+                                </h6>
+                                <p class="card-text text-muted small">
+                                    {{ show_data.auditorium.name }}
+                                </p>
+                                <p class="card-text">
+                                    <span class="badge bg-success">${{ "%.2f"|format(show_data.show.price) }}</span>
+                                </p>
+                                <a href="{{ url_for('bookings.select_seats',
+                                                    show_id=show_data.show.show_id,
+                                                    event_id=show_data.show.event_id) }}"
+                                   class="btn btn-primary btn-sm w-100">
+                                    Select Seats
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        No shows available for this date. Please select a different date.
+    </div>
+    <a href="{{ url_for('events.event_detail', event_id=event.event_id) }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Movie Details
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
